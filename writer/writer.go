@@ -440,6 +440,7 @@ func (pw *ParquetWriter) Flush(flag bool) error {
 				}
 
 				page := rowGroup.Chunks[k].Pages[l]
+				data := page.RawData
 				//only record DataPage
 				if page.Header.Type != parquet.PageType_DICTIONARY_PAGE {
 					if page.Header.DataPageHeader == nil && page.Header.DataPageHeaderV2 == nil {
@@ -473,14 +474,14 @@ func (pw *ParquetWriter) Flush(flag bool) error {
 					pageLocation := parquet.NewPageLocation()
 					pageLocation.Offset = pw.Offset
 					pageLocation.FirstRowIndex = firstRowIndex
-					pageLocation.CompressedPageSize = page.Header.CompressedPageSize
+					pageLocation.CompressedPageSize = int32(len(data))
+					// pageLocation.CompressedPageSize = pw.pageLocationHeaderSize + page.Header.CompressedPageSize
 
 					offsetIndex.PageLocations = append(offsetIndex.PageLocations, pageLocation)
 
 					firstRowIndex += int64(page.Header.DataPageHeader.NumValues)
 				}
 
-				data := rowGroup.Chunks[k].Pages[l].RawData
 				if _, err = pw.PFile.Write(data); err != nil {
 					return err
 				}
