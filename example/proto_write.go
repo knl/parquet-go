@@ -46,6 +46,8 @@ type ProtoMessage struct {
 	Timestamp timestamppb.Timestamp
 	Status    JobStatus
 	IntVal    int32
+	Bytes     []byte
+	String    string
 }
 type TestInterface interface {
 	foo()
@@ -80,12 +82,12 @@ type TestInterfaceStruct struct {
 
 func main() {
 	protoMessages := []ProtoMessage{
-		ProtoMessage{Timestamp: timestamppb.Timestamp{Seconds: 1, Nanos: 1000000}, Status: JobStatus_RUNNING, IntVal: 1},
-		ProtoMessage{Timestamp: timestamppb.Timestamp{Seconds: 2, Nanos: 1000000}, Status: JobStatus_ENQUEUED, IntVal: 2},
-		ProtoMessage{Timestamp: timestamppb.Timestamp{Seconds: 3, Nanos: 1000000}, Status: JobStatus_COMPLETED, IntVal: 3},
-		ProtoMessage{Timestamp: timestamppb.Timestamp{Seconds: 4, Nanos: 1000000}, Status: JobStatus_ERRORED, IntVal: 4},
-		ProtoMessage{Timestamp: timestamppb.Timestamp{Seconds: 5, Nanos: 1000000}, Status: JobStatus_CANCELLED, IntVal: 5},
-		ProtoMessage{Timestamp: timestamppb.Timestamp{Seconds: 6, Nanos: 1000000}, Status: JobStatus_UPSTREAM_NOT_PROCESSED, IntVal: 6},
+		ProtoMessage{Timestamp: timestamppb.Timestamp{Seconds: 1, Nanos: 1000000}, Status: JobStatus_RUNNING, IntVal: 1, Bytes: []byte("test"), String: "test"},
+		ProtoMessage{Timestamp: timestamppb.Timestamp{Seconds: 2, Nanos: 1000000}, Status: JobStatus_ENQUEUED, IntVal: 2, Bytes: []byte("test"), String: "test"},
+		ProtoMessage{Timestamp: timestamppb.Timestamp{Seconds: 3, Nanos: 1000000}, Status: JobStatus_COMPLETED, IntVal: 3, Bytes: []byte("test"), String: "test"},
+		ProtoMessage{Timestamp: timestamppb.Timestamp{Seconds: 4, Nanos: 1000000}, Status: JobStatus_ERRORED, IntVal: 4, Bytes: []byte("test"), String: "test"},
+		ProtoMessage{Timestamp: timestamppb.Timestamp{Seconds: 5, Nanos: 1000000}, Status: JobStatus_CANCELLED, IntVal: 5, Bytes: []byte("test"), String: "test"},
+		ProtoMessage{Timestamp: timestamppb.Timestamp{Seconds: 6, Nanos: 1000000}, Status: JobStatus_UPSTREAM_NOT_PROCESSED, IntVal: 6, Bytes: []byte("test"), String: "test"},
 	}
 	impl2 := TestInterfaceImpl2{
 		Test:            "test",

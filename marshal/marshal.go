@@ -318,7 +318,7 @@ func MarshalStruct(srcInterface []interface{}, schemaHandler *schema.SchemaHandl
 				} else {
 					m = &ParquetStruct{}
 				}
-			} else if tk == reflect.Slice || tk == reflect.Array {
+			} else if (tk == reflect.Slice || tk == reflect.Array) && (node.Val.Type().Elem().Kind() != reflect.Uint8) {
 				m = &ParquetSlice{schemaHandler: schemaHandler}
 			} else if tk == reflect.Map {
 				schemaIndex := schemaHandler.MapIndex[node.PathMap.Path]
@@ -341,6 +341,11 @@ func MarshalStruct(srcInterface []interface{}, schemaHandler *schema.SchemaHandl
 				// special handling for the enum
 				if isProto && schemaDefinition.ConvertedType != nil && *schemaDefinition.ConvertedType == parquet.ConvertedType_ENUM {
 					v = node.Val.MethodByName(schema.ProtoStringMethodName).Call(nil)[0].Interface().(string)
+				}
+				// special handling for the bytes
+				if *schemaDefinition.Type == parquet.Type_BYTE_ARRAY && (node.Val.Type().Kind() == reflect.Slice || node.Val.Type().Kind() == reflect.Array) {
+					v = string(node.Val.Bytes())
+
 				}
 				table.Values = append(table.Values, types.InterfaceToParquetType(v, schemaDefinition.Type))
 				table.DefinitionLevels = append(table.DefinitionLevels, node.DL)
